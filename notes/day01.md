@@ -61,7 +61,7 @@ class Solution {
 ## 双指针  
 **目标** 学会使用快慢指针和对撞指针  
 
-**题目: 27.移除元素**  
+### 题目: 27.移除元素
 **位置:** https://leetcode.cn/problems/remove-element/
 ```java
 // 快慢指针
@@ -96,10 +96,39 @@ class Solution {
     }
 }
 ```
-
-
-
-
+### 题目:977.有序数组的平方
+**位置:** https://leetcode.cn/problems/squares-of-a-sorted-array/
+```java
+//暴力排序法
+class Solution {
+    public int[] sortedSquares(int[] nums) {
+        for (int i = 0; i < nums.length; i++) {
+            nums[i] = nums[i] * nums[i];
+        }
+        Arrays.sort(nums);
+        return nums;
+    }
+}
+class Solution {
+    public int[] sortedSquares(int[] nums) {
+        int right = nums.length - 1;
+        int left = 0;
+        int[] result = new int[nums.length];
+        int index = result.length - 1;
+        while (left <= right) {
+            if (nums[left] * nums[left] > nums[right] * nums[right]) {
+                // 正数的相对位置是不变的， 需要调整的是负数平方后的相对位置
+                result[index--] = nums[left] * nums[left];
+                ++left;
+            } else {
+                result[index--] = nums[right] * nums[right];
+                --right;
+            }
+        }
+        return result;
+    }
+}
+```
 
 
 
@@ -144,3 +173,9 @@ class Solution {
 - **介绍**：>> 是Java的带符号右移位运算符，意思是：把(right-left) 的二进制整体向右移动1位。直观理解：>> 1 等于 “除以 2”且向下取整
 - **防止溢出**：不用 left + right，避免两个大数相加超过 int 上限
 - 算中间位置**更安全**：标准二分写法
+
+### 后缀自减
+result[index--] = nums[left] * nums[left]; 的含义是：
+- 先用当前的 index 作为下标，完成赋值：result[index] = nums[left] * nums[left];
+- 再把 index 减 1（向左移动一格），为下一次填充做准备。
+
