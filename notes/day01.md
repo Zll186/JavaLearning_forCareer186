@@ -58,7 +58,44 @@ class Solution {
 
 
 
+## 双指针  
+**目标** 学会使用快慢指针和对撞指针  
 
+**题目: 27.移除元素**  
+**位置:** https://leetcode.cn/problems/remove-element/
+```java
+// 快慢指针
+class Solution {
+    public int removeElement(int[] nums, int val) {
+        int slowIndex = 0;
+        for (int fastIndex = 0; fastIndex < nums.length; fastIndex++) {//慢指针静止,快指针for循环
+            if (nums[fastIndex] != val) {
+                nums[slowIndex] = nums[fastIndex];
+                slowIndex++;
+            }
+        }
+        return slowIndex;
+    }
+}
+//相向双指针法
+class Solution {
+    public int removeElement(int[] nums, int val) {
+        int left = 0;
+        int right = nums.length - 1;
+        while(right >= 0 && nums[right] == val) right--; //将right移到从右数第一个值不为val的位置
+        while(left <= right) {
+            if(nums[left] == val) { //left位置的元素需要移除
+                //将right位置的元素移到left（覆盖），right位置移除
+                nums[left] = nums[right];
+                right--;
+            }
+            left++;
+            while(right >= 0 && nums[right] == val) right--;
+        }
+        return left;
+    }
+}
+```
 
 
 
