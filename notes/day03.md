@@ -24,100 +24,140 @@ public class ListNode {
 **题目:203.移除链表元素**  
 **位置:** https://leetcode.cn/problems/remove-linked-list-elements/description/  
 ```java
+//原链表删除
+public ListNode removeElements(ListNode head, int val) {
+    //为什么用 while 而不是 if？ 因为可能存在连续多个节点都需要删除，while 会一直删到第一个“干净”的节点为止。
+    while(head!=null && head.val==val) {
+        head = head.next;
+    }
+    ListNode curr = head;// 创建一个临时指针 curr，用来遍历链表
+    while(curr!=null && curr.next !=null) {
+        if(curr.next.val == val){
+            curr.next = curr.next.next;
+        } else {
+            curr = curr.next;
+        }
+    }
+    return head;
+}
+//虚拟头节点
 class Solution {
     public ListNode removeElements(ListNode head, int val) {
-        ListNode dummy = new ListNode(0,head); // 虚拟头结点,不想单独处理“头结点被操作”的各种特例时就得加
+        ListNode dummy = new ListNode(0,head); //原本的 head 就变成了 dummy.next
                                                // 一般只要涉及修改链表都得需要加
-        ListNode curr = dummy;
-        while(curr!=null&&curr.next!=null){
-            ListNode tmp=curr.next.next;
-            if(curr.next.val==val){
-                curr.next=tmp;
-            }else{// 注意这个else 如果curr.next.val==val 此时不能移动指针,因为还需要判断下一个指向的元素是不是val,一旦一定就把下个元素跳过了
-                curr=curr.next;
-            }
-            
+        ListNode curr = dummy;// 让 cur 从虚拟头节点开始
+        while(curr.next!=null){ //始终站在“待删除节点”的前一个位置
+            if (cur.next.val == val) {
+            cur.next = cur.next.next;
+        } else {
+            cur = cur.next;        
         }
-        return dummy.next;
     }
+    return dummy.next;
+   }
 }
 ```
 **题目: 707.设计链表**  
 **位置:** https://leetcode.cn/problems/design-linked-list/description/  
+这道题目设计链表的五个接口：
+- 获取链表第index个节点的数值
+- 在链表的最前面插入一个节点
+- 在链表的最后面插入一个节点
+- 在链表第index个节点前面插入一个节点
+- 删除链表的第index个节点
+
+
 ```java
-class Node{
-        int val;
-        Node next;
-        public Node(){} //无参构造
-        public Node(int val,Node next){ //有参构造
-            this.val = val;
-            this.next = next;
-        }
-}
+//单链表
 class MyLinkedList {
-    // 虚拟头结点
-    Node dummy;    // 注意,一定得用虚拟头结点,否则会多出很多很多麻烦
-    int len;
-    public MyLinkedList() {
-        this.dummy=new Node(0,null);
-        len =0;
-    }
-    
-    public int get(int index) {
-        Node curr =dummy.next;
-        if(index<0 || index>=len) return -1;
-        for(int i=0;i<index;i++){
-            curr=curr.next;
+
+    class ListNode {
+        int val;
+        ListNode next;
+        ListNode(int val) {
+            this.val=val;
         }
-        return curr.val;
     }
-    
+    //size存储链表元素的个数
+    private int size;
+    //注意这里记录的是虚拟头结点
+    private ListNode head;
+
+    //初始化链表
+    public MyLinkedList() {
+        this.size = 0;
+        this.head = new ListNode(0);
+    }
+
+    //获取第index个节点的数值，注意index是从0开始的，第0个节点就是虚拟头结点
+    public int get(int index) {
+        //如果index非法，返回-1
+        if (index < 0 || index >= size) {
+            return -1;
+        }
+        ListNode cur = head;
+        //第0个节点是虚拟头节点，所以查找第 index+1 个节点
+        for (int i = 0; i <= index; i++) {
+            cur = cur.next;
+        }
+        return cur.val;
+    }
+
     public void addAtHead(int val) {
-        Node head = dummy.next;
-        dummy.next = new Node(val,head);
-        len++;
+        ListNode newNode = new ListNode(val);
+        newNode.next = head.next;
+        head.next = newNode;
+        size++;
+
+        // 在链表最前面插入一个节点，等价于在第0个元素前添加
+        // addAtIndex(0, val);
     }
+
     
     public void addAtTail(int val) {
-        Node curr = dummy;
-        while(curr.next!=null){
-            curr=curr.next;
+        ListNode newNode = new ListNode(val);
+        ListNode cur = head;
+        while (cur.next != null) {
+            cur = cur.next;
         }
-        curr.next= new Node(val,null);
-        len++;
+        cur.next = newNode;
+        size++;
+
+        // 在链表的最后插入一个节点，等价于在(末尾+1)个元素前添加
+        // addAtIndex(size, val);
     }
-    
+
+    // 在第 index 个节点之前插入一个新节点，例如index为0，那么新插入的节点为链表的新头节点。
+    // 如果 index 等于链表的长度，则说明是新插入的节点为链表的尾结点
+    // 如果 index 大于链表的长度，则返回空
     public void addAtIndex(int index, int val) {
-        if(index<0 || index>len) {
+        if (index < 0 || index > size) {
             return;
         }
-        if(index==len){
-            addAtTail(val);
-            return;
+
+        //找到要插入节点的前驱
+        ListNode pre = head;
+        for (int i = 0; i < index; i++) {
+            pre = pre.next;
         }
-        if(index==0){
-            addAtHead(val);
-            return;
-        }
-        Node pre = dummy;
-        for(int i=0;i<index;i++){
-            pre=pre.next;
-        }
-        Node tmp = pre.next;
-        pre.next = new Node(val,tmp);
-        len++;
+        ListNode newNode = new ListNode(val);
+        newNode.next = pre.next;
+        pre.next = newNode;
+        size++;
     }
-    
+
     public void deleteAtIndex(int index) {
-        if(index<0||index>=len){
+        if (index < 0 || index >= size) {
             return;
         }
-        Node pre = dummy;
-        for(int i=0;i<index;i++){
-            pre=pre.next;
+        
+        //因为有虚拟头节点，所以不用对index=0的情况进行特殊处理
+        ListNode pre = head;
+        for (int i = 0; i < index ; i++) {
+            pre = pre.next;
         }
         pre.next = pre.next.next;
-        len--;
+        size--;
     }
 }
 
