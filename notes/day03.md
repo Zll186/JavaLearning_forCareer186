@@ -65,12 +65,11 @@ class Solution {
 - 在链表的最后面插入一个节点
 - 在链表第index个节点前面插入一个节点
 - 删除链表的第index个节点
-
+**思路**虚拟头节点
 
 ```java
 //单链表
 class MyLinkedList {
-
     class ListNode {
         int val;
         ListNode next;
@@ -78,11 +77,9 @@ class MyLinkedList {
             this.val=val;
         }
     }
-    //size存储链表元素的个数
-    private int size;
-    //注意这里记录的是虚拟头结点
-    private ListNode head;
-
+    private int size; //size存储链表元素的个数
+    private ListNode head;  //注意这里记录的是虚拟头结点
+    
     //初始化链表
     public MyLinkedList() {
         this.size = 0;
@@ -102,18 +99,17 @@ class MyLinkedList {
         }
         return cur.val;
     }
-
+    //在链表的最前面插入一个节点
     public void addAtHead(int val) {
         ListNode newNode = new ListNode(val);
         newNode.next = head.next;
         head.next = newNode;
         size++;
-
         // 在链表最前面插入一个节点，等价于在第0个元素前添加
         // addAtIndex(0, val);
     }
 
-    
+    //在链表的最后面插入一个节点
     public void addAtTail(int val) {
         ListNode newNode = new ListNode(val);
         ListNode cur = head;
@@ -122,9 +118,6 @@ class MyLinkedList {
         }
         cur.next = newNode;
         size++;
-
-        // 在链表的最后插入一个节点，等价于在(末尾+1)个元素前添加
-        // addAtIndex(size, val);
     }
 
     // 在第 index 个节点之前插入一个新节点，例如index为0，那么新插入的节点为链表的新头节点。
@@ -134,7 +127,6 @@ class MyLinkedList {
         if (index < 0 || index > size) {
             return;
         }
-
         //找到要插入节点的前驱
         ListNode pre = head;
         for (int i = 0; i < index; i++) {
@@ -146,6 +138,7 @@ class MyLinkedList {
         size++;
     }
 
+    //删除链表的第index个节点
     public void deleteAtIndex(int index) {
         if (index < 0 || index >= size) {
             return;
@@ -166,20 +159,22 @@ class MyLinkedList {
 **位置:** https://leetcode.cn/problems/reverse-linked-list/description/  
 ```java
 // 这道题目经常用作其他题目的一个方法，最好直接记住，能够不假思索写出来
+//双指针法
 class Solution {
     public ListNode reverseList(ListNode head) {
-        ListNode ans = null;
-        ListNode curr=head;
-        while(curr!=null){
-            ListNode tmp = curr.next;
-            curr.next = ans;
-            ans = curr;
-            curr= tmp;
+        ListNode prev = null;
+        ListNode cur = head;
+        ListNode temp = null;
+        while (cur != null) {
+            temp = cur.next;// 保存下一个节点
+            cur.next = prev;
+            prev = cur;
+            cur = temp;
         }
-        return ans;
-
+        return prev;
     }
 }
+
 ```
 
 ## little tips
