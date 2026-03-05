@@ -27,7 +27,7 @@ class Solution {
         ListNode dummy = new ListNode(0,head);
         ListNode fast = dummy;
         ListNode slow = dummy;
-        for(int i=0;i<n;i++){
+        for(int i=0;i<n;i++){///注意此处的边界为“i<n”
             fast=fast.next;
         }
         while(fast.next!=null){
